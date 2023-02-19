@@ -1,0 +1,45 @@
+pipeline {
+  agent any
+  
+  stages {
+    stage('Build') {
+      steps {
+        // Checkout code from source control
+        checkout scm
+        
+        // Build the project
+        sh 'mvn clean package'
+      }
+    }
+    
+    stage('Test') {
+      steps {
+        // Run unit tests
+        sh 'mvn test'
+      }
+    }
+    
+    stage('Deploy to Staging') {
+      steps {
+        // Deploy to a staging environment
+        sh 'docker build -t myapp .'
+        sh 'docker run -d -p 8080:8080 myapp'
+      }
+    }
+    
+    stage('Integration Test') {
+      steps {
+        // Run integration tests against the staging environment
+        sh 'mvn verify'
+      }
+    }
+    
+    stage('Deploy to Production') {
+      steps {
+        // Deploy to the production environment
+        sh 'docker tag myapp my-registry.com/myapp:latest'
+        sh 'docker push my-registry.com/myapp:latest'
+      }
+    }
+  }
+}
