@@ -33,13 +33,5 @@ pipeline {
         sh 'mvn verify'
       }
     }
-    
-    stage('Deploy to Production') {
-      steps {
-        // Deploy to the production environment
-        sh 'docker tag myapp my-registry.com/myapp:latest'
-        sh 'docker push my-registry.com/myapp:latest'
-      }
-    }
   }
 }
